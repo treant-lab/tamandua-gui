@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Tamandua design tokens */
+    --bg: #0a0e10;
+    --bg-2: #0d1216;
+    --surface: #11181d;
+    --surface-2: #161f25;
+    --surface-3: #1c272e;
+    --hairline: #1d272d;
+    --border: #243038;
+    --border-strong: #334350;
+
+    --fg: #e8eef0;
+    --fg-2: #c9d3d8;
+    --muted: #8a9aa1;
+    --subtle: #5e6d74;
+    --dim: #43525a;
+
+    --emerald-100: #c9f7dd;
+    --emerald-200: #7be0a6;
+    --emerald-400: #2fc471;
+    --emerald-500: #22a85f;
+    --emerald-600: #178a4d;
+    --emerald-700: #0d6a3a;
+    --emerald-glow: rgba(47, 196, 113, 0.18);
+
+    --sol-magenta: #d946ef;
+    --sol-cyan: #19fb9b;
+
+    --crit: #f0506e;
+    --crit-bg: rgba(240, 80, 110, 0.12);
+    --high: #f5a524;
+    --high-bg: rgba(245, 165, 36, 0.12);
+    --med: #5b9cf2;
+    --med-bg: rgba(91, 156, 242, 0.12);
+    --low: #7a8a92;
+    --low-bg: rgba(122, 138, 146, 0.12);
+
+    --r-sm: 4px;
+    --r: 6px;
+    --r-md: 8px;
+    --r-lg: 12px;
+    --r-xl: 16px;
+
+    --sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+    --mono: "Geist Mono", ui-monospace, monospace;
+
+    /* Shadcn compatibility */
+    --background: var(--bg);
+    --foreground: var(--fg);
+    --card: var(--surface);
+    --card-foreground: var(--fg);
+    --popover: var(--surface-2);
+    --popover-foreground: var(--fg);
+    --primary: var(--emerald-500);
+    --primary-foreground: #042012;
+    --secondary: var(--surface-2);
+    --secondary-foreground: var(--fg-2);
+    --muted: var(--surface-3);
+    --muted-foreground: var(--muted);
+    --accent: var(--surface-2);
+    --accent-foreground: var(--fg);
+    --destructive: var(--crit);
+    --destructive-foreground: #fff;
+    --border: var(--hairline);
+    --input: var(--border);
+    --ring: var(--emerald-400);
+    --radius: var(--r);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Status colors */
+.severity-critical { color: var(--crit); }
+.severity-high { color: var(--high); }
+.severity-medium { color: var(--med); }
+.severity-low { color: var(--low); }
+
+.bg-severity-critical { background: var(--crit-bg); }
+.bg-severity-high { background: var(--high-bg); }
+.bg-severity-medium { background: var(--med-bg); }
+.bg-severity-low { background: var(--low-bg); }
+
+/* Solana badge gradient */
+.badge-solana {
+  color: #f0d4ff;
+  border-color: rgba(217, 70, 239, 0.3);
+  background: linear-gradient(90deg, rgba(153, 69, 255, 0.12), rgba(20, 241, 149, 0.08));
+}
+
+/* Proof card accents */
+.proof-incident { border-color: rgba(240, 80, 110, 0.3); background: var(--crit-bg); }
+.proof-health { border-color: rgba(47, 196, 113, 0.3); background: rgba(47, 196, 113, 0.08); }
+.proof-remediation { border-color: rgba(91, 156, 242, 0.3); background: var(--med-bg); }
+
+/* Code blocks */
+.code-block {
+  background: #06090b;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: #d2dde2;
+  white-space: pre;
+  overflow-x: auto;
+}
+.code-comment { color: #5e6d74; }
+.code-keyword { color: #7be0a6; }
+.code-string { color: #f5a524; }
+.code-token { color: #f0d4ff; }

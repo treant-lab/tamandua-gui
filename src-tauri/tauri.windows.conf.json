@@ -1,0 +1,9 @@
+{
+  "tauri": {
+    "bundle": {
+      "resources": {
+        "bin/tamandua-agent.exe": "tamandua-agent.exe"
+      }
+    }
+  }
+}

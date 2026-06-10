@@ -1,0 +1,70 @@
+[package]
+name = "tamandua-gui"
+version = "0.1.0"
+description = "Tamandua EDR Desktop GUI"
+authors = ["Tamandua Team"]
+license = "Apache-2.0"
+repository = "https://github.com/treant-lab/tamandua-gui"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tauri = { version = "1.5", features = ["shell-open", "system-tray", "notification-all", "dialog-all", "fs-all", "window-all", "process-all"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.38", features = ["full"] }
+futures = "0.3"
+
+# IPC protocol (MessagePack, same as Agent)
+rmp-serde = "1.3"
+bytes = "1.5"
+hex = "0.4"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.6", features = ["serde", "v4"] }
+thiserror = "1.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+parking_lot = "0.12"
+sysinfo = "0.32"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+# Authentication dependencies
+argon2 = "0.5"
+rand = "0.8"
+hmac = "0.12"
+sha2 = "0.10"
+base64 = "0.21"
+zeroize = "1.7"
+dirs = "5.0"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.52", features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_Security_Cryptography",
+    "Win32_System_Memory",
+    "Win32_System_Services",
+    "Win32_System_Threading",
+    "Security_Credentials_UI",
+    "Foundation",
+    "Foundation_Collections",
+] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+security-framework = "2.9"
+objc = "0.2"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+secret-service = "3.0"
+
+# Force compatible versions for rustc 1.86
+[patch.crates-io]
+serde_with = { git = "https://github.com/jonasbb/serde_with", tag = "v3.9.0" }
