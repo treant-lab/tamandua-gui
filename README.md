@@ -253,7 +253,7 @@ npm run tauri:build
 
 Creates:
 - `Tamandua EDR.app` (application bundle)
-- `Tamandua EDR_0.1.0_x64.dmg` (installer)
+- `Tamandua-vX.Y.Z-{x86_64,arm64}.dmg` (signed/notarized installer)
 
 ## Troubleshooting
 
