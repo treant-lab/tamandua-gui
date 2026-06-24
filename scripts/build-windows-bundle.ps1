@@ -50,9 +50,16 @@ try {
     }
 
     Write-Host "Building portable executable..."
-    & cargo build --manifest-path (Join-Path $srcTauri "Cargo.toml") --release
-    if ($LASTEXITCODE -ne 0) {
-        throw "Rust release build failed."
+    $previousTauriConfig = $env:TAURI_CONFIG
+    $env:TAURI_CONFIG = '{"tauri":{"bundle":{"resources":{"../../tamandua_agent/target/release/tamandua-agent.exe":"tamandua-agent.exe"}}}}'
+    try {
+        & cargo build --manifest-path (Join-Path $srcTauri "Cargo.toml") --release
+        if ($LASTEXITCODE -ne 0) {
+            throw "Rust release build failed."
+        }
+    }
+    finally {
+        $env:TAURI_CONFIG = $previousTauriConfig
     }
 
     Write-Host "Building bundled agent executable..."
