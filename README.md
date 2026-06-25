@@ -353,4 +353,4 @@ MIT
 
 - [Tauri Documentation](https://tauri.app/)
 - [Firezone Tauri Implementation](https://github.com/firezone/firezone)
-- [Tamandua EDR Documentation](../../ROADMAP.md)
+- [Tamandua Community](https://github.com/treant-lab/tamandua-community)
