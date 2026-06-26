@@ -18,6 +18,7 @@ import { Performance } from './pages/Performance';
 import { Logs } from './pages/Logs';
 import { MitreAttack } from './pages/MitreAttack';
 import { ThreatIntel } from './pages/ThreatIntel';
+import { Community } from './pages/Community';
 import { ResponseHistory } from './pages/ResponseHistory';
 import { AgentSetup } from './pages/AgentSetup';
 import { Updates } from './pages/Updates';
@@ -79,6 +80,7 @@ function AppContent() {
             <Route path="logs" element={<Logs />} />
             <Route path="mitre" element={<MitreAttack />} />
             <Route path="threat-intel" element={<ThreatIntel />} />
+            <Route path="community" element={<Community />} />
             <Route path="response-history" element={<ResponseHistory />} />
             <Route path="events" element={<EventHistory />} />
             <Route path="license" element={<License />} />

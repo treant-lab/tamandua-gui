@@ -25,6 +25,7 @@ import {
   ShieldOff,
   Target,
   Undo2,
+  Users,
   UserRoundCog,
   X,
 } from 'lucide-react';
@@ -54,6 +55,7 @@ const navGroups = [
     items: [
       { to: '/mitre', icon: Target, label: 'MITRE ATT&CK' },
       { to: '/threat-intel', icon: Radio, label: 'Threat Intel' },
+      { to: '/community', icon: Users, label: 'Community' },
       { to: '/response-history', icon: Undo2, label: 'Response History' },
       { to: '/scan', icon: Search, label: 'Scan' },
       { to: '/schedules', icon: Calendar, label: 'Scheduled Scans' },
