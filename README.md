@@ -119,6 +119,15 @@ npm run tauri:build
 
 This project is pinned to **Tauri v1**. Use the repo-local CLI through npm and avoid running
 `cargo tauri build` directly if the machine has a global Tauri v2 installation.
+On Windows, `npm run tauri:build` automatically applies
+`src-tauri/tauri.bundle.windows.conf.json` so the bundled resource matches
+`src-tauri/bin/tamandua-agent.exe` fetched by `npm run build:agent`.
+On Linux/macOS, it applies `src-tauri/tauri.posix.conf.json` so the bundled
+resource matches `src-tauri/bin/tamandua-agent`. The base `tauri.conf.json`
+intentionally has no agent resource entry so a clean source checkout can run
+`cargo check` before a release binary has been fetched.
+Use `npm run tauri:build:plan` to print the packaged build commands without
+fetching the agent or invoking Tauri.
 
 For environment checks:
 

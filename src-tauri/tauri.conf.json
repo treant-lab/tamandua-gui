@@ -85,9 +85,6 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "resources": {
-        "bin/tamandua-agent": "tamandua-agent"
-      },
       "externalBin": [],
       "copyright": "",
       "category": "Utility",
