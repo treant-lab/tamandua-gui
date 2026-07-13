@@ -69,7 +69,7 @@ describe('Dialog', () => {
     expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument()
   })
 
-  it('closes on overlay click', async () => {
+  it('closes from the built-in close button', async () => {
     const user = userEvent.setup()
 
     render(
@@ -86,13 +86,8 @@ describe('Dialog', () => {
     await user.click(screen.getByText('Open'))
     expect(screen.getByText('Dialog Title')).toBeInTheDocument()
 
-    // Click the overlay (Radix adds data-radix-collection-item to overlay)
-    const overlay = document.querySelector('[data-state="open"]')?.previousSibling as HTMLElement
-    if (overlay) {
-      await user.click(overlay)
-    }
+    await user.click(screen.getByText('Close'))
 
-    // Dialog should be closed
     expect(screen.queryByText('Dialog Title')).not.toBeInTheDocument()
   })
 

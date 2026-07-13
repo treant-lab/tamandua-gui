@@ -362,4 +362,4 @@ MIT
 
 - [Tauri Documentation](https://tauri.app/)
 - [Firezone Tauri Implementation](https://github.com/firezone/firezone)
-- [Tamandua Community](https://github.com/treant-lab/tamandua-community)
+- [Tamandua EDR Documentation](../../ROADMAP.md)

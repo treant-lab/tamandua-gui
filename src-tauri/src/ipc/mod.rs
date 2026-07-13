@@ -446,14 +446,22 @@ pub enum AgentState {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentMetrics {
     pub timestamp: DateTime<Utc>,
-    pub events_processed: u64,
-    pub events_per_second: f64,
-    pub alerts_generated: u32,
-    pub actions_executed: u32,
-    pub cpu_usage: f32,
-    pub memory_usage: u64,
-    pub network_bytes_sent: u64,
-    pub network_bytes_received: u64,
+    #[serde(default)]
+    pub events_processed: Option<u64>,
+    #[serde(default)]
+    pub events_per_second: Option<f64>,
+    #[serde(default)]
+    pub alerts_generated: Option<u32>,
+    #[serde(default)]
+    pub actions_executed: Option<u32>,
+    #[serde(default)]
+    pub cpu_usage: Option<f32>,
+    #[serde(default)]
+    pub memory_usage: Option<u64>,
+    #[serde(default)]
+    pub network_bytes_sent: Option<u64>,
+    #[serde(default)]
+    pub network_bytes_received: Option<u64>,
     pub collector_metrics: Vec<CollectorMetrics>,
 }
 
@@ -461,10 +469,14 @@ pub struct AgentMetrics {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CollectorMetrics {
     pub name: String,
-    pub events_collected: u64,
-    pub events_per_second: f64,
-    pub errors: u32,
-    pub cpu_percent: f32,
+    #[serde(default)]
+    pub events_collected: Option<u64>,
+    #[serde(default)]
+    pub events_per_second: Option<f64>,
+    #[serde(default)]
+    pub errors: Option<u32>,
+    #[serde(default)]
+    pub cpu_percent: Option<f32>,
 }
 
 // ==================== NEW: Component Status Types ====================

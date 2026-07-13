@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   Select,
@@ -64,8 +64,9 @@ describe('Select', () => {
     await user.click(screen.getByLabelText('Select option'))
     await user.click(screen.getByText('Option 1'))
 
-    // After selection, the content should be closed (not visible)
-    expect(screen.queryByText('Option 1')).not.toBeVisible()
+    await waitFor(() => {
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+    })
   })
 
   it('closes on Escape key', async () => {
@@ -89,8 +90,9 @@ describe('Select', () => {
 
     await user.keyboard('{Escape}')
 
-    // Content should be closed
-    expect(screen.queryByText('Option 1')).not.toBeVisible()
+    await waitFor(() => {
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument()
+    })
   })
 
   it('shows selected value', async () => {

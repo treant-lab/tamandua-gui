@@ -211,17 +211,8 @@ describe("toast function", () => {
 });
 
 describe("Toaster integration", () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.runOnlyPendingTimers();
-    vi.useRealTimers();
-  });
-
   it("renders toasts when triggered", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const user = userEvent.setup();
 
     render(
       <>
@@ -238,7 +229,7 @@ describe("Toaster integration", () => {
   });
 
   it("shows toast description", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const user = userEvent.setup();
 
     render(
       <>

@@ -60,20 +60,29 @@ describe('DataTable', () => {
         enableSorting: true,
       },
     ]
+    const unsortedData: TestData[] = [
+      { id: 3, name: 'Charlie', email: 'charlie@example.com' },
+      { id: 1, name: 'Alice', email: 'alice@example.com' },
+      { id: 2, name: 'Bob', email: 'bob@example.com' },
+    ]
 
-    render(<DataTable columns={sortableColumns} data={mockData} />)
+    render(<DataTable columns={sortableColumns} data={unsortedData} />)
 
     const nameHeader = screen.getByText('Name')
 
-    // Click to sort ascending
     await user.click(nameHeader)
 
-    // Data should be sorted (Alice, Bob, Charlie)
-    const cells = screen.getAllByRole('cell')
-    const nameCells = cells.filter((cell, index) => index % 2 === 0) // Get first column cells
+    let nameCells = screen.getAllByRole('cell')
     expect(nameCells[0]).toHaveTextContent('Alice')
     expect(nameCells[1]).toHaveTextContent('Bob')
     expect(nameCells[2]).toHaveTextContent('Charlie')
+
+    await user.click(nameHeader)
+
+    nameCells = screen.getAllByRole('cell')
+    expect(nameCells[0]).toHaveTextContent('Charlie')
+    expect(nameCells[1]).toHaveTextContent('Bob')
+    expect(nameCells[2]).toHaveTextContent('Alice')
   })
 
   it('displays pagination controls', () => {
