@@ -326,20 +326,6 @@ pub fn update_tray_status(
     backend_connected: bool,
     collectors_running: usize,
 ) {
-    let protection_text = if protection_active {
-        "Protection: Active"
-    } else {
-        "Protection: Disabled"
-    };
-
-    let backend_text = if backend_connected {
-        "Backend: Connected"
-    } else {
-        "Backend: Disconnected"
-    };
-
-    let collectors_text = format!("Collectors: {} running", collectors_running);
-
     // Note: Tauri 1.x doesn't support dynamic menu updates easily
     // This would need to rebuild the tray menu or use Tauri 2.x features
     // For now, we emit events that the frontend can use to show notifications

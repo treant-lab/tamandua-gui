@@ -3,6 +3,7 @@
 mod auth;
 mod commands;
 mod ipc;
+mod macos;
 mod state;
 mod tray;
 
@@ -149,6 +150,11 @@ fn main() {
             commands::start_agent,
             commands::stop_agent,
             commands::restart_agent,
+            // Explicit macOS System Extension lifecycle commands. These are
+            // never invoked during setup and accept no caller-supplied ID.
+            commands::get_macos_system_extension_lifecycle,
+            commands::activate_macos_system_extension,
+            commands::deactivate_macos_system_extension,
         ])
         .setup(|app| {
             let handle = app.handle();

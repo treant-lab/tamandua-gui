@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
 yarn.lock
 
 # Build outputs
@@ -10,7 +9,6 @@ build/
 
 # Tauri
 src-tauri/target/
-src-tauri/Cargo.lock
 
 # Fetched agent binary (downloaded by scripts/fetch-agent.mjs, not committed)
 src-tauri/bin/

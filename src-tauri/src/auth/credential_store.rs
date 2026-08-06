@@ -9,7 +9,9 @@ use crate::auth::AuthError;
 use parking_lot::RwLock;
 use std::sync::Arc;
 
-/// Service name for credential storage
+/// Service name for credential storage (used by the macOS/Linux keyring
+/// backends; the Windows DPAPI backend keys files by account name only)
+#[cfg_attr(target_os = "windows", allow(dead_code))]
 const SERVICE_NAME: &str = "com.tamandua.edr.gui";
 
 /// Account name for the master password hash
@@ -99,29 +101,36 @@ impl Clone for CredentialStore {
 #[cfg(target_os = "windows")]
 mod platform {
     use super::*;
-    use std::collections::HashMap;
     use std::fs;
     use std::path::PathBuf;
     use windows::Win32::Foundation::{LocalFree, HLOCAL};
     use windows::Win32::Security::Cryptography::{
-        CryptProtectData, CryptUnprotectData, CRYPTPROTECT_LOCAL_MACHINE,
-        CRYPTPROTECT_UI_FORBIDDEN, CRYPT_INTEGER_BLOB,
+        CryptProtectData, CryptUnprotectData, CRYPTPROTECT_UI_FORBIDDEN, CRYPT_INTEGER_BLOB,
     };
 
     pub struct CredentialStoreInner {
         storage_path: PathBuf,
-        cache: HashMap<String, String>,
     }
 
     impl CredentialStoreInner {
         pub fn new() -> Result<Self, AuthError> {
             // Get app data directory
+            #[cfg(not(test))]
             let storage_path = dirs::data_local_dir()
                 .ok_or_else(|| {
                     AuthError::CredentialStoreError("Cannot find app data directory".to_string())
                 })?
                 .join("Tamandua")
                 .join("credentials");
+
+            // Unit tests must never touch the real per-user credential files
+            // (%LOCALAPPDATA%\Tamandua\credentials). Use a unique temp dir per
+            // store instance so tests are hermetic and parallel-safe.
+            #[cfg(test)]
+            let storage_path = std::env::temp_dir().join(format!(
+                "tamandua-gui-test-credentials-{}",
+                uuid::Uuid::new_v4()
+            ));
 
             // Create directory if it doesn't exist
             fs::create_dir_all(&storage_path).map_err(|e| {
@@ -131,10 +140,7 @@ mod platform {
                 ))
             })?;
 
-            Ok(Self {
-                storage_path,
-                cache: HashMap::new(),
-            })
+            Ok(Self { storage_path })
         }
 
         pub fn has_credential(&self, account: &str) -> Result<bool, AuthError> {
@@ -186,7 +192,7 @@ mod platform {
 
         fn encrypt_dpapi(&self, data: &[u8]) -> Result<Vec<u8>, AuthError> {
             unsafe {
-                let mut input = CRYPT_INTEGER_BLOB {
+                let input = CRYPT_INTEGER_BLOB {
                     cbData: data.len() as u32,
                     pbData: data.as_ptr() as *mut u8,
                 };
@@ -197,7 +203,7 @@ mod platform {
                 };
 
                 let result = CryptProtectData(
-                    &mut input,
+                    &input,
                     None,
                     None,
                     None,
@@ -222,7 +228,7 @@ mod platform {
 
         fn decrypt_dpapi(&self, data: &[u8]) -> Result<Vec<u8>, AuthError> {
             unsafe {
-                let mut input = CRYPT_INTEGER_BLOB {
+                let input = CRYPT_INTEGER_BLOB {
                     cbData: data.len() as u32,
                     pbData: data.as_ptr() as *mut u8,
                 };
@@ -233,7 +239,7 @@ mod platform {
                 };
 
                 let result = CryptUnprotectData(
-                    &mut input,
+                    &input,
                     None,
                     None,
                     None,

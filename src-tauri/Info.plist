@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Tauri v1 merges this metadata into the generated com.tamandua.edr host bundle. -->
+    <key>NSSystemExtensionUsageDescription</key>
+    <string>Tamandua EDR uses a system extension to observe and report file activity for threat detection.</string>
+</dict>
+</plist>

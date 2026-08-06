@@ -1,0 +1,135 @@
+:root {
+  color: #e8f1ee;
+  background: #07100f;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { min-width: 320px; min-height: 100%; margin: 0; }
+body { min-height: 100vh; overflow-x: hidden; }
+button, code { font: inherit; }
+
+.fixture-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 75% -15%, rgba(35, 174, 119, 0.14), transparent 30rem),
+    linear-gradient(145deg, #07100f 0%, #0a1413 55%, #0c1716 100%);
+}
+
+.fixture-banner {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 9px 20px;
+  color: #191107;
+  background: repeating-linear-gradient(-45deg, #ffb84a 0 12px, #ffc96e 12px 24px);
+  border-bottom: 1px solid #ffd797;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.fixture-banner strong { font-size: 13px; letter-spacing: 0.1em; }
+.fixture-banner span { font-size: 12px; font-weight: 700; }
+.fixture-layout { min-height: calc(100vh - 42px); display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+
+.fixture-sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 16px;
+  background: rgba(7, 15, 14, 0.96);
+  border-right: 1px solid #1e302d;
+}
+
+.fixture-brand { display: flex; align-items: center; gap: 12px; margin: 0 6px 28px; }
+.fixture-brand-mark {
+  width: 38px; height: 38px; display: grid; place-items: center;
+  color: #042318; background: #37d391; border-radius: 11px; font-weight: 900;
+  box-shadow: 0 0 26px rgba(55, 211, 145, 0.24);
+}
+.fixture-brand span:last-child { display: grid; gap: 2px; }
+.fixture-brand strong { font-size: 15px; }
+.fixture-brand small, .fixture-nav-label { color: #76908a; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; }
+.fixture-nav-label { margin: 0 10px 8px; font-weight: 800; }
+.fixture-sidebar nav { display: grid; gap: 5px; }
+.fixture-nav-item { min-height: 40px; display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 8px; color: #879e98; font-size: 13px; }
+.fixture-nav-item.active { color: #dcfff1; background: rgba(55, 211, 145, 0.12); border: 1px solid rgba(55, 211, 145, 0.18); }
+.fixture-nav-item.excluded { opacity: 0.5; }
+.fixture-nav-item small { margin-left: auto; font-size: 9px; text-transform: uppercase; }
+.fixture-boundary-note { margin-top: auto; display: grid; gap: 6px; padding: 12px; border: 1px solid #2b403c; border-radius: 10px; background: #0d1b19; }
+.fixture-boundary-note strong { color: #ffcb78; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.fixture-boundary-note span { color: #7f9690; font-size: 10px; line-height: 1.45; }
+
+.fixture-main { width: min(100%, 1450px); margin: 0 auto; padding: 25px 28px 20px; }
+.fixture-page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 20px; }
+.fixture-kicker { margin: 0 0 6px; color: #58dca4; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.13em; }
+.fixture-page-head h1 { margin: 0; font-size: clamp(25px, 3vw, 38px); line-height: 1.06; letter-spacing: -0.04em; }
+.fixture-page-head p:not(.fixture-kicker) { margin: 8px 0 0; color: #8ca29d; font-size: 13px; }
+.fixture-badges { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.fixture-badge { padding: 7px 10px; border-radius: 999px; border: 1px solid #2c403c; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.fixture-badge--critical { color: #ff9a9a; background: rgba(239, 68, 68, 0.09); border-color: rgba(239, 68, 68, 0.27); }
+.fixture-badge--neutral { color: #a5b8b3; background: rgba(255,255,255,0.03); }
+
+.fixture-status-card { display: grid; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 17px; padding: 18px; margin-bottom: 18px; background: linear-gradient(100deg, rgba(238, 71, 71, 0.12), rgba(18, 35, 32, 0.8)); border: 1px solid rgba(238, 71, 71, 0.28); border-radius: 13px; }
+.fixture-status-icon { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 50%; color: #1c0707; background: #ff7979; font-weight: 900; font-size: 22px; }
+.fixture-status-card h2 { margin: 0; font: 700 16px ui-monospace, SFMono-Regular, Consolas, monospace; }
+.fixture-status-card p:not(.fixture-kicker) { margin: 5px 0 0; color: #aabbb7; font-size: 12px; }
+.fixture-status-pill { padding: 6px 8px; color: #ffb0b0; border: 1px solid rgba(255,128,128,.24); border-radius: 6px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+
+.fixture-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+.fixture-stat, .fixture-panel { background: rgba(13, 27, 25, 0.88); border: 1px solid #213431; border-radius: 12px; box-shadow: 0 12px 35px rgba(0,0,0,.12); }
+.fixture-stat { min-height: 105px; display: grid; align-content: center; gap: 5px; padding: 15px; }
+.fixture-stat > span { color: #829892; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+.fixture-stat > strong { overflow: hidden; color: #effbf7; font-size: clamp(17px, 2vw, 24px); text-overflow: ellipsis; white-space: nowrap; }
+.fixture-stat--critical > strong { overflow: visible; line-height: 1.15; overflow-wrap: anywhere; text-overflow: clip; white-space: normal; }
+.fixture-stat > small { color: #647b75; font-size: 10px; }
+.fixture-stat--critical { border-color: rgba(239, 68, 68, 0.26); }
+.fixture-stat--critical > strong { color: #ff9b9b; }
+
+.fixture-content-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(310px, .85fr); gap: 14px; }
+.fixture-panel { min-height: 225px; padding: 18px; }
+.fixture-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 22px; }
+.fixture-panel-head h2 { margin: 0; font-size: 15px; }
+.fixture-panel-head > span { color: #788f89; font: 10px ui-monospace, SFMono-Regular, Consolas, monospace; }
+.fixture-metric { display: grid; gap: 8px; margin: 18px 0; }
+.fixture-metric > div:first-child { display: flex; justify-content: space-between; color: #93a8a3; font-size: 11px; }
+.fixture-metric code { color: #55d69f; }
+.fixture-meter { height: 7px; overflow: hidden; background: #1d302c; border-radius: 999px; }
+.fixture-meter > span { display: block; height: 100%; background: #39d393; }
+.fixture-denials { display: grid; gap: 8px; }
+.fixture-denial { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 8px; padding: 9px 10px; background: #0a1614; border: 1px solid #223733; border-radius: 8px; font-size: 10px; }
+.fixture-denial > span { overflow: hidden; color: #aabbb7; text-overflow: ellipsis; white-space: nowrap; }
+.fixture-denial code { color: #ffb7b7; }
+.fixture-denial button { padding: 5px 7px; color: #8ca09b; background: #172522; border: 1px solid #2d403c; border-radius: 5px; font-size: 9px; cursor: not-allowed; }
+.fixture-footer { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 15px; color: #647a75; font-size: 9px; text-transform: uppercase; letter-spacing: .06em; }
+.fixture-footer code { color: #9eb2ad; text-transform: none; }
+
+.fixture-invalid { min-height: 100vh; display: grid; place-content: center; gap: 16px; padding: 30px; color: #ffb7b7; background: #120909; text-align: center; }
+.fixture-invalid strong { color: #ffca75; letter-spacing: .1em; }
+.fixture-invalid code { padding: 12px; border: 1px solid #7a2929; border-radius: 8px; }
+
+@media (max-width: 920px) {
+  .fixture-layout { grid-template-columns: 150px minmax(0, 1fr); }
+  .fixture-sidebar { padding-inline: 10px; }
+  .fixture-brand { justify-content: center; margin-inline: 0; }
+  .fixture-brand > span:last-child, .fixture-nav-item small { display: none; }
+  .fixture-nav-label { margin-inline: 8px; font-size: 9px; }
+  .fixture-nav-item { gap: 8px; padding-inline: 8px; font-size: 11px; }
+  .fixture-nav-item > span { font-size: 13px; }
+  .fixture-boundary-note { display: none; }
+  .fixture-main { padding-inline: 20px; }
+  .fixture-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fixture-content-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-height: 680px) {
+  .fixture-main { padding-top: 17px; }
+  .fixture-page-head { margin-bottom: 13px; }
+  .fixture-status-card { margin-bottom: 12px; padding-block: 12px; }
+  .fixture-stat-grid { margin-bottom: 12px; }
+  .fixture-stat { min-height: 82px; }
+  .fixture-panel { min-height: 190px; }
+}

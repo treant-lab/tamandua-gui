@@ -285,17 +285,26 @@ impl AuditLog {
 
     // Private methods
 
+    #[cfg(not(test))]
     fn get_log_directory() -> Result<PathBuf, AuthError> {
         let base = if cfg!(target_os = "windows") {
             dirs::data_local_dir()
-        } else if cfg!(target_os = "macos") {
-            dirs::data_dir()
         } else {
+            // macOS and Linux both use the platform data dir
             dirs::data_dir()
         };
 
         base.map(|p| p.join("Tamandua").join("logs"))
             .ok_or_else(|| AuthError::Internal("Cannot determine log directory".to_string()))
+    }
+
+    /// Unit tests must never read or append to the real per-user audit log
+    /// (it makes entry-count assertions nondeterministic and pollutes the
+    /// operator's audit trail). Use a unique temp dir per log instance so
+    /// tests are hermetic and parallel-safe.
+    #[cfg(test)]
+    fn get_log_directory() -> Result<PathBuf, AuthError> {
+        Ok(std::env::temp_dir().join(format!("tamandua-gui-test-logs-{}", Uuid::new_v4())))
     }
 
     fn write_to_file(&self, event: &AuditEvent) {
@@ -358,11 +367,9 @@ impl AuditLog {
         let reader = BufReader::new(file);
         let mut events: Vec<AuditEvent> = Vec::new();
 
-        for line in reader.lines() {
-            if let Ok(line) = line {
-                if let Ok(event) = serde_json::from_str::<AuditEvent>(&line) {
-                    events.push(event);
-                }
+        for line in reader.lines().map_while(Result::ok) {
+            if let Ok(event) = serde_json::from_str::<AuditEvent>(&line) {
+                events.push(event);
             }
         }
 
@@ -448,7 +455,8 @@ mod tests {
         audit.log(AuditEventType::LoginSuccess, true, Some("Test login"));
 
         let json = audit.export_json().unwrap();
-        assert!(json.contains("LoginSuccess"));
+        // AuditEventType serializes with `rename_all = "snake_case"`.
+        assert!(json.contains("login_success"));
         assert!(json.contains("Test login"));
     }
 

@@ -235,7 +235,7 @@ impl PasswordPolicy {
         let has_upper = password.chars().any(|c| c.is_uppercase());
         let has_lower = password.chars().any(|c| c.is_lowercase());
         let has_digit = password.chars().any(|c| c.is_ascii_digit());
-        let has_special = password.chars().any(|c| is_special_char(c));
+        let has_special = password.chars().any(is_special_char);
 
         let class_count = [has_upper, has_lower, has_digit, has_special]
             .iter()
@@ -306,7 +306,7 @@ impl PasswordPolicy {
         if password.chars().any(|c| c.is_ascii_digit()) {
             score += 10;
         }
-        if password.chars().any(|c| is_special_char(c)) {
+        if password.chars().any(is_special_char) {
             score += 15;
         }
 

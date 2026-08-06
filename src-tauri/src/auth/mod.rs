@@ -14,7 +14,7 @@ mod password;
 mod session;
 
 pub use audit::{AuditEvent, AuditEventType, AuditLog};
-pub use biometric::{BiometricAuth, BiometricCapability, BiometricMethod};
+pub use biometric::{BiometricAuth, BiometricCapability};
 pub use credential_store::CredentialStore;
 pub use password::{PasswordHasher, PasswordPolicy, PasswordStrength};
 pub use session::{Session, SessionManager, SessionStatus};

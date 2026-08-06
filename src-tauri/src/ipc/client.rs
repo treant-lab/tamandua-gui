@@ -340,9 +340,9 @@ impl IpcClient {
 
     /// Get a receiver for notifications
     pub async fn take_notification_receiver(&self) -> Option<mpsc::Receiver<IpcMessage>> {
-        let mut rx = self.notification_rx.lock().await;
+        let _rx = self.notification_rx.lock().await;
         // Create a new channel and swap
-        let (new_tx, new_rx) = mpsc::channel(100);
+        let (_new_tx, new_rx) = mpsc::channel(100);
         // Note: This is a simplified implementation
         // In production, use a proper broadcast channel
         Some(new_rx)

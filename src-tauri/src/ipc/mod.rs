@@ -16,7 +16,6 @@ pub mod client;
 mod protocol;
 
 pub use client::IpcClient;
-pub use protocol::MessageFrame;
 
 /// Maximum message size (16 MB)
 pub const MAX_MESSAGE_SIZE: usize = 16 * 1024 * 1024;

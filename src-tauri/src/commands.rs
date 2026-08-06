@@ -18,6 +18,28 @@ use crate::ipc::{
 };
 use crate::state::AppState;
 
+#[command]
+pub fn get_macos_system_extension_lifecycle(
+) -> crate::macos::system_extension_lifecycle::LifecycleSnapshot {
+    crate::macos::system_extension_lifecycle::snapshot()
+}
+
+#[command]
+pub fn activate_macos_system_extension(
+    confirmed: bool,
+) -> Result<crate::macos::system_extension_lifecycle::LifecycleSnapshot, String> {
+    crate::macos::system_extension_lifecycle::request_activation(confirmed)
+        .map_err(|error| error.as_str().to_string())
+}
+
+#[command]
+pub fn deactivate_macos_system_extension(
+    confirmed: bool,
+) -> Result<crate::macos::system_extension_lifecycle::LifecycleSnapshot, String> {
+    crate::macos::system_extension_lifecycle::request_deactivation(confirmed)
+        .map_err(|error| error.as_str().to_string())
+}
+
 // ============================================================================
 // Privilege Commands
 // ============================================================================
@@ -1389,16 +1411,16 @@ fn agent_config_contents() -> Result<String, String> {
 fn agent_config_path() -> PathBuf {
     #[cfg(windows)]
     {
-        return windows_program_data_dir()
+        windows_program_data_dir()
             .unwrap_or_else(|| PathBuf::from(r"C:\ProgramData"))
             .join("Tamandua")
             .join("config")
-            .join("agent.toml");
+            .join("agent.toml")
     }
 
     #[cfg(target_os = "macos")]
     {
-        return PathBuf::from("/Library/Application Support/Tamandua/config/agent.toml");
+        PathBuf::from("/Library/Application Support/Tamandua/config/agent.toml")
     }
 
     #[cfg(all(unix, not(target_os = "macos")))]
@@ -2578,7 +2600,7 @@ fn local_events_from_event_history(
         true
     });
 
-    events.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+    events.sort_by_key(|event| std::cmp::Reverse(event.timestamp));
     let offset = filter.and_then(|f| f.offset).unwrap_or(0);
     let events = events.into_iter().skip(offset);
 
@@ -2612,7 +2634,7 @@ fn local_logs_from_event_history(
         true
     });
 
-    events.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+    events.sort_by_key(|event| std::cmp::Reverse(event.timestamp));
     Ok(events
         .into_iter()
         .take(limit.unwrap_or(1000))
@@ -2630,7 +2652,7 @@ fn local_alerts_from_event_history(
         since.map(|since| event.timestamp >= since).unwrap_or(true)
             && event_is_alert_candidate(event)
     });
-    events.sort_by(|a, b| b.timestamp.cmp(&a.timestamp));
+    events.sort_by_key(|event| std::cmp::Reverse(event.timestamp));
 
     Ok(events
         .into_iter()
@@ -3048,7 +3070,7 @@ fn build_event_statistics(
         .into_iter()
         .map(|(event_type, count)| crate::ipc::TypeCount { event_type, count })
         .collect();
-    event_type_distribution.sort_by(|a, b| b.count.cmp(&a.count));
+    event_type_distribution.sort_by_key(|entry| std::cmp::Reverse(entry.count));
 
     let mut top_processes: Vec<_> = by_process
         .into_iter()
@@ -3057,14 +3079,14 @@ fn build_event_statistics(
             count,
         })
         .collect();
-    top_processes.sort_by(|a, b| b.count.cmp(&a.count));
+    top_processes.sort_by_key(|entry| std::cmp::Reverse(entry.count));
     top_processes.truncate(10);
 
     let mut events_per_hour: Vec<_> = by_hour
         .into_iter()
         .map(|(hour, count)| crate::ipc::HourlyCount { hour, count })
         .collect();
-    events_per_hour.sort_by(|a, b| a.hour.cmp(&b.hour));
+    events_per_hour.sort_by_key(|entry| entry.hour);
 
     EventStatistics {
         events_per_hour,
@@ -3222,7 +3244,7 @@ async fn get_wsl_status_windows() -> Result<WslStatus, String> {
             // Remove null bytes (UTF-16 encoding issue)
             let stdout: String = stdout.chars().filter(|c| *c != '\0').collect();
 
-            let mut lines = stdout.lines().skip(1); // Skip header
+            let lines = stdout.lines().skip(1); // Skip header
 
             for line in lines {
                 let line = line.trim();
@@ -3566,13 +3588,23 @@ pub struct Schedule {
 }
 
 /// Schedule config for create/update
+///
+/// Fields are the frontend input contract; they are deserialized but not yet
+/// consumed because the persistent scheduler is not wired (stub commands
+/// below return an explicit error).
 #[derive(Debug, Clone, serde::Deserialize)]
 pub struct ScheduleConfig {
+    #[allow(dead_code)]
     pub name: String,
+    #[allow(dead_code)]
     pub scan_type: String,
+    #[allow(dead_code)]
     pub frequency: ScheduleFrequency,
+    #[allow(dead_code)]
     pub paths: Vec<String>,
+    #[allow(dead_code)]
     pub options: ScanOptions,
+    #[allow(dead_code)]
     pub detection_action: DetectionAction,
 }
 
@@ -3609,6 +3641,7 @@ pub async fn get_schedules() -> Result<Vec<Schedule>, String> {
 /// Get a single schedule
 #[command]
 pub async fn get_schedule(schedule_id: String) -> Result<Option<Schedule>, String> {
+    let _ = schedule_id;
     Ok(None)
 }
 
@@ -3656,6 +3689,7 @@ pub async fn get_schedule_history(
     schedule_id: String,
     limit: Option<usize>,
 ) -> Result<Vec<ScheduleHistory>, String> {
+    let _ = (schedule_id, limit);
     Ok(vec![])
 }
 
@@ -3664,6 +3698,7 @@ pub async fn get_schedule_history(
 pub async fn get_schedule_running_status(
     schedule_id: String,
 ) -> Result<Option<ScheduleRunningStatus>, String> {
+    let _ = schedule_id;
     Ok(None)
 }
 
@@ -3905,6 +3940,17 @@ pub async fn install_agent_service(
     service_name: Option<String>,
     no_driver: Option<bool>,
 ) -> Result<AgentInstallInfo, String> {
+    // Frontend-supplied service names cross a privileged boundary (installer
+    // argv, sc.exe, launchd label); reject anything outside a conservative
+    // identifier charset. Blank input falls back to the platform default.
+    let service_name = match service_name.as_deref().map(str::trim) {
+        Some(name) if !name.is_empty() => {
+            validate_agent_service_name(name)?;
+            Some(name.to_string())
+        }
+        _ => None,
+    };
+
     let requested_service_name = normalized_agent_service_name(service_name.as_deref());
     let result = match install_local_agent_service(
         token,
@@ -4191,6 +4237,42 @@ fn normalized_agent_service_name(service_name: Option<&str>) -> String {
     let default_name = "TamanduaAgent".to_string();
 
     default_name
+}
+
+/// Validate a caller-supplied service name at the Tauri command boundary.
+///
+/// The value crosses a privileged boundary: it becomes agent-installer argv
+/// (`--name <value>`), a Windows `sc.exe` service identifier, and (on macOS)
+/// part of the launchd label used in an elevated shell line. Only a
+/// conservative identifier charset is accepted, and the first character must
+/// be alphanumeric so the value can never be parsed as a command-line flag
+/// by the installer.
+fn validate_agent_service_name(name: &str) -> Result<(), String> {
+    const MAX_SERVICE_NAME_LEN: usize = 64;
+
+    if name.len() > MAX_SERVICE_NAME_LEN {
+        return Err(format!(
+            "Service name is too long ({} characters, maximum {}).",
+            name.len(),
+            MAX_SERVICE_NAME_LEN
+        ));
+    }
+
+    let mut chars = name.chars();
+    let first_ok = chars
+        .next()
+        .is_some_and(|c| c.is_ascii_alphanumeric());
+    let rest_ok = chars.all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '_' | '-'));
+
+    if first_ok && rest_ok {
+        Ok(())
+    } else {
+        Err(
+            "Service name may only contain ASCII letters, digits, '.', '_' or '-', \
+             and must start with a letter or digit."
+                .to_string(),
+        )
+    }
 }
 
 fn is_reused_enrollment_token_error(error: &str) -> bool {
@@ -5060,14 +5142,13 @@ fn stage_agent_installer_binary(agent_exe: &std::path::Path) -> Result<PathBuf, 
         chrono::Utc::now().timestamp_millis()
     );
 
-    let mut staging_dirs = Vec::new();
-    staging_dirs.push(
+    let staging_dirs = vec![
         windows_program_data_dir()
             .unwrap_or_else(|| PathBuf::from(r"C:\ProgramData"))
             .join("Tamandua")
             .join("installer"),
-    );
-    staging_dirs.push(std::env::temp_dir().join("Tamandua").join("installer"));
+        std::env::temp_dir().join("Tamandua").join("installer"),
+    ];
 
     let mut errors = Vec::new();
 
@@ -5504,4 +5585,94 @@ async fn start_agent_service() -> Result<AgentStartInfo, String> {
         "Starting the agent service from the GUI is currently implemented for Windows only."
             .to_string(),
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{normalized_agent_service_name, validate_agent_service_name};
+
+    #[test]
+    fn service_name_accepts_conservative_identifiers() {
+        for name in [
+            "TamanduaAgent",
+            "com.tamandua.agent",
+            "tamandua-agent_2",
+            "0agent",
+            "A",
+        ] {
+            assert!(
+                validate_agent_service_name(name).is_ok(),
+                "expected {name:?} to be accepted"
+            );
+        }
+    }
+
+    #[test]
+    fn service_name_rejects_flag_style_input() {
+        // A leading dash could be parsed as an installer command-line flag.
+        for name in ["-name", "--no-driver", "-", ".hidden", "_x"] {
+            assert!(
+                validate_agent_service_name(name).is_err(),
+                "expected {name:?} to be rejected"
+            );
+        }
+    }
+
+    #[test]
+    fn service_name_rejects_shell_metacharacters_and_whitespace() {
+        for name in [
+            "Tamandua Agent",
+            "a;b",
+            "a$(id)",
+            "a`id`",
+            "a'b",
+            "a\"b",
+            "a\nb",
+            "a\tb",
+            "system/other",
+            "a\\b",
+            "a&b",
+            "a|b",
+            "",
+        ] {
+            assert!(
+                validate_agent_service_name(name).is_err(),
+                "expected {name:?} to be rejected"
+            );
+        }
+    }
+
+    #[test]
+    fn service_name_rejects_overlong_input() {
+        let long = "a".repeat(65);
+        assert!(validate_agent_service_name(&long).is_err());
+        let max = "a".repeat(64);
+        assert!(validate_agent_service_name(&max).is_ok());
+    }
+
+    #[test]
+    fn normalized_service_name_defaults_pass_validation() {
+        // Blank / missing input falls back to a platform default which must
+        // itself satisfy the privileged-boundary validator.
+        for input in [None, Some(""), Some("   ")] {
+            let name = normalized_agent_service_name(input);
+            assert!(!name.is_empty());
+            assert!(
+                validate_agent_service_name(&name).is_ok(),
+                "platform default {name:?} must pass validation"
+            );
+        }
+    }
+
+    #[test]
+    fn normalized_service_name_passes_through_trimmed_explicit_name() {
+        assert_eq!(
+            normalized_agent_service_name(Some("  CustomAgent  ")),
+            "CustomAgent"
+        );
+        assert_eq!(
+            normalized_agent_service_name(Some("com.tamandua.agent")),
+            "com.tamandua.agent"
+        );
+    }
 }
